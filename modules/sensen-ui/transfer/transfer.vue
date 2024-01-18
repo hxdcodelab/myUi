@@ -35,7 +35,6 @@ const options = props.data.map(({ title }) => title)
 const [targetIndex, setTargetIndex] = useTargetIndex(0)
 const [rightListData, addRightListData, removeRightListData] = useRightListData([])
 const { leftTitle, leftListData } = useComputedDate(props.data, targetIndex, rightListData)
-
 </script>
 
 <style lang="scss" scoped>
