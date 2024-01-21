@@ -1,40 +1,55 @@
 <template>
     <div>
-        <select @change="setTargetIndex($event.target.value)">
-            <option v-for="(title, index) in options" :key="index" :value="index">{{ title }}</option>
-        </select>
-    </div>
-    <div class="transfer">
-        <div class="box left-list">
-            <h1 class="list-title">{{ leftTitle }}</h1>
-            <div>
-                <div v-for="item of leftListData" :key="item.id" :class="['list-item', item.disabled ? 'disabled' : '']">
-                    <!-- '__checkbox__' +item.id必须放在"" -->
-                    <input type="checkbox" :disabled="item.disabled" :id="'__checkbox__' + item.id">
-                    <label :id="'__checkbox__' + item.id">{{ item.phone_name }}</label>
+        <div>
+            <Selector :data="options" @selectChange="setTargetIndex"></Selector>
+        </div>
+        <div class="transfer">
+            <!-- 阻止dragOver的默认事件后才可以拖动 -->
+            <div class="box left-list" @dragover.prevent @drop="removeRightListData([dragedItem])">
+                <ListTitle :title="leftTitle"></ListTitle>
+                <div>
+                    <ListItem :data="leftListData" left-or-right="left" @checkboxClick="setCheckedData"
+                        @dragItem="setDragedItem"></ListItem>
                 </div>
             </div>
-        </div>
-        <div class="box button-group">
-            <button>&lt;</button>
-            <button>&gt;</button>
-        </div>
-        <div class="box right-list">
-            <h1 class="list-title">{{ rightTitle }}</h1>
-            <div></div>
+            <div class="box button-group">
+                <button :disabled="transferDisabledButton.left"
+                    @click="removeRightListData(checkedData.right)">&lt;</button>
+                <button :disabled="transferDisabledButton.right" @click="addRightListData(checkedData.left)">&gt;</button>
+            </div>
+            <div class="box right-list" @dragover.prevent @drop="addRightListData([dragedItem])">
+                <ListTitle :title="rightTitle"></ListTitle>
+                <div>
+                    <ListItem :data="rightListData" left-or-right="right" @checkboxClick="setCheckedData"
+                        @dragItem="setDragedItem"></ListItem>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
 import propsDefination from './extends/prop'
-import { useTargetIndex, useComputedDate, useRightListData } from './extends/hook'
+import ListItem from './components/ListItem';
+import { useTargetIndex, useComputedDate, useRightListData, useCheckedData, useDragedItem } from './extends/hook'
+import { computed } from 'vue';
+import Selector from './components/selector';
+import ListTitle from './components/ListTitle'
 // 理解到propsDefination本质就是一个对象
 const props = defineProps(propsDefination)
 const options = props.data.map(({ title }) => title)
 const [targetIndex, setTargetIndex] = useTargetIndex(0)
-const [rightListData, addRightListData, removeRightListData] = useRightListData([])
-const { leftTitle, leftListData } = useComputedDate(props.data, targetIndex, rightListData)
+const { checkedData, addCheckedData, removeCheckedData } = useCheckedData()
+const [rightListData, addRightListData, removeRightListData] = useRightListData([], checkedData)
+const { leftTitle, leftListData } = useComputedDate(props.data, targetIndex, rightListData, checkedData)
+const setCheckedData = (checked, leftOrRight, item) => {
+    checked ? addCheckedData(leftOrRight, item) : removeCheckedData(leftOrRight, item.id)
+}
+const transferDisabledButton = computed(() => ({
+    left: checkedData.right.length == 0,
+    right: checkedData.left.length == 0
+}))
+const [dragedItem, setDragedItem] = useDragedItem()
 
 </script>
 
@@ -49,19 +64,6 @@ const { leftTitle, leftListData } = useComputedDate(props.data, targetIndex, rig
     .box {
         width: 120px;
         height: 100%;
-
-        .list-title {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 38px;
-            font-weight: normal;
-            margin: 0;
-            color: #666;
-            border-bottom: 1px solid #ddd;
-            background-color: #efefef;
-            font-size: 14px;
-        }
 
         &.button-group {
             display: flex;
