@@ -88,3 +88,7 @@ export function useComputedDate(data, targetIndex, rightListData, checkedData) {
     }
 
 }
+
+const queryStringToObject = (string) => {
+    Object.fromEntries(...new URLSearchParams(string.split('?')[1]))
+}

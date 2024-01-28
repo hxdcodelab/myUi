@@ -1,4 +1,7 @@
 <script setup>
+import useUserInfo from './store/user'
+import CommentOne from './comments/CommentOne';
+const userInfoStore = useUserInfo()
 const data = [
   {
     title: '华为', data: [{
@@ -58,7 +61,27 @@ const data = [
 </script>
 
 <template>
-  <transfer :data="data" right-Title="已选择"></transfer>
+  <!-- <transfer :data="data" right-Title="已选择"></transfer> -->
+  <div>
+    <h1>{{ userInfoStore.userInfo.username }}</h1>
+    <!-- setUserInfo不需要传入store -->
+    <button :class="{ active: userInfoStore.userInfo.id == 1 }" @click="userInfoStore.setUserInfo({
+      id: 1, username: '张三'
+    })">张三</button>
+    <button :class="{ active: userInfoStore.userInfo.id == 2 }" @click="userInfoStore.setUserInfo({
+      id: 2, username: '李四'
+    })">李四</button>
+    <button :class="{ active: userInfoStore.userInfo.id == 3 }" @click="userInfoStore.setUserInfo({
+      id: 3, username: '王五'
+    })">王五</button>
+    <hr>
+    <CommentOne></CommentOne>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.active {
+  background-color: #000;
+  color: #fff;
+}
+</style>

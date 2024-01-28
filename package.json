@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "delfin": "^1.2.5",
     "vue": "^3.3.11"
   },
   "devDependencies": {
