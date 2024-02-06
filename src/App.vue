@@ -1,6 +1,10 @@
 <script setup>
 import useUserInfo from './store/user'
-import CommentOne from './comments/CommentOne';
+import { ref } from 'vue'
+// import CommentOne from './comments/CommentOne';
+// import MyTable from '../modules/sensen-ui/myTable/MyTable.vue';
+import Message, { types } from '../modules/sensen-ui/message';
+import JsppMessage from '../modules/sensen-ui/message/Message.vue';
 const userInfoStore = useUserInfo()
 const data = [
   {
@@ -58,13 +62,57 @@ const data = [
     ]
   }
 ]
+const tableData = ref({
+  tHead: [
+    { key: 'id', text: '学号', editable: true },
+    {
+      key: 'name', text: '姓名', editable: true
+    },
+    {
+      key: 'age', text: '年龄', editable: true
+    },
+    {
+      key: 'chinese', text: '语文', editable: true
+    }, {
+      key: 'math', text: '数学', editable: true
+    }, {
+      key: 'english', text: '英语', editable: true
+    }
+  ],
+  tBody: [
+    {
+      id: 1, name: '张三', age: 16, chinese: 121, math: 98, english: 138
+    }, {
+      id: 2, name: '李四', age: 16, chinese: 121, math: 98, english: 138
+    }, {
+      id: 3, name: '王五', age: 16, chinese: 121, math: 98, english: 138
+    }
+  ]
+})
+const editData = ({ index, key, value, text }, removeInput) => {
+  if (tableData.value.tBody[index][key] !== value) {
+    const cfm = window.confirm(`需要将${index}项${text}字段内容修改为${value}吗？`)
+    if (cfm) {
+      tableData.value.tBody = tableData.value.tBody.map((item, idx) => {
+        index == idx && (item[key] = value)
+        return item
+      })
+    } else {
+      removeInput()
+    }
+  }
+
+}
+const getStarNum = () => {
+
+}
 </script>
 
 <template>
   <!-- <transfer :data="data" right-Title="已选择"></transfer> -->
-  <div>
+  <!-- <div>
     <h1>{{ userInfoStore.userInfo.username }}</h1>
-    <!-- setUserInfo不需要传入store -->
+    setUserInfo不需要传入store
     <button :class="{ active: userInfoStore.userInfo.id == 1 }" @click="userInfoStore.setUserInfo({
       id: 1, username: '张三'
     })">张三</button>
@@ -76,6 +124,16 @@ const data = [
     })">王五</button>
     <hr>
     <CommentOne></CommentOne>
+  </div> -->
+  <!-- <MyTable :data="tableData" @submit="editData"></MyTable> -->
+  <!-- <Stars :num="5" :size="30" @getStarNum="getStarNum"></Stars> -->
+  <div>
+    <!-- 传递props时不一定需要： -->
+    <JsppMessage type="warning" message="test Message component"></JsppMessage>
+    <button @click="Message.success({ message: 'success' })">show success</button>
+    <button @click="Message.warning({ message: 'warning' })">show warning</button>
+    <button @click="Message({ type: types.message, message: '' })">show message</button>
+    <button @click="Message({ type: types.error, message: 'success' })">show error</button>
   </div>
 </template>
 
