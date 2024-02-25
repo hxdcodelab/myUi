@@ -5,6 +5,8 @@ import { ref } from 'vue'
 // import MyTable from '../modules/sensen-ui/myTable/MyTable.vue';
 import Message, { types } from '../modules/sensen-ui/message';
 import JsppMessage from '../modules/sensen-ui/message/Message.vue';
+import MyMessageBox from '../modules/sensen-ui/messageBox';
+
 const userInfoStore = useUserInfo()
 const data = [
   {
@@ -104,7 +106,45 @@ const editData = ({ index, key, value, text }, removeInput) => {
 
 }
 const getStarNum = () => {
-
+}
+const showMessageBox = () => {
+  MyMessageBox({
+    confirmBtnText: '确定',
+    title: 'MessageBox',
+    content: 'messageBox content'
+  })
+  // .then(() => {
+  //   console.log('messagebox resolve');
+  // }).catch(() => {
+  //   console.log('messagebox reject');
+  // })
+}
+const showConfirmMessageBox = () => {
+  MyMessageBox.confirm({
+    showCancelBtn: true,
+    cancelBtnText: '取消',
+    title: 'confirmMessageBox',
+    content: 'confirmmessageBox content'
+  })
+  // .then(() => {
+  //   console.log('confirmmessagebox resolve');
+  // }).catch(() => {
+  //   console.log('confirmmessagebox reject');
+  // })
+}
+const showPromptessageBox = () => {
+  MyMessageBox.prompt({
+    confirmBtnText: '确定',
+    showCancelBtn: true,
+    cancelBtnText: '取消',
+    title: 'promptMessageBox',
+    content: 'promptmessageBox content'
+  })
+  // .then(() => {
+  //   console.log('promptmessagebox resolve');
+  // }).catch(() => {
+  //   console.log('promptmessagebox reject');
+  // })
 }
 </script>
 
@@ -129,11 +169,14 @@ const getStarNum = () => {
   <!-- <Stars :num="5" :size="30" @getStarNum="getStarNum"></Stars> -->
   <div>
     <!-- 传递props时不一定需要： -->
-    <JsppMessage type="warning" message="test Message component"></JsppMessage>
-    <button @click="Message.success({ message: 'success' })">show success</button>
-    <button @click="Message.warning({ message: 'warning' })">show warning</button>
-    <button @click="Message({ type: types.message, message: '' })">show message</button>
-    <button @click="Message({ type: types.error, message: 'success' })">show error</button>
+    <!-- <JsppMessage type="warning" message="test Message component" :duration="5000"></JsppMessage> -->
+    <!-- <button @click="Message.success({ message: 'success' })">show success</button> -->
+    <!-- <button @click="Message.warning({ message: 'warning' })">show warning</button> -->
+    <!-- <button @click="Message({ type: types.message, message: '' })">show message</button> -->
+    <!-- <button @click="Message({ type: types.error, message: 'success' })">show error</button> -->
+    <button @click="showMessageBox">showMessageBox</button>
+    <button @click="showConfirmMessageBox">showConfirmMessageBox</button>
+    <button @click="showPromptessageBox">showPromptessageBox</button>
   </div>
 </template>
 
